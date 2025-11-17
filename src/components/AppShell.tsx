@@ -35,7 +35,7 @@ const AppShell = ({ children }: AppShellProps) => {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed left-0 top-0 z-40 h-screen bg-neutral-sidebar border-r border-border transition-all duration-300",
+          "fixed left-0 top-0 z-40 h-screen bg-card border-r border-border transition-all duration-300",
           sidebarOpen ? "w-64" : "w-20"
         )}
       >
@@ -68,10 +68,10 @@ const AppShell = ({ children }: AppShellProps) => {
                   key={item.path}
                   to={item.path}
                   className={cn(
-                    "flex items-center gap-3 px-3 py-3 rounded-xl transition-all",
+                    "flex items-center gap-3 px-3 py-3 rounded-lg transition-all",
                     isActive
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "hover:bg-muted text-text-secondary hover:text-foreground"
+                      ? "bg-primary text-primary-foreground shadow-glow"
+                      : "hover:bg-muted text-muted-foreground hover:text-foreground"
                   )}
                   title={!sidebarOpen ? item.label : undefined}
                 >
@@ -102,19 +102,19 @@ const AppShell = ({ children }: AppShellProps) => {
         )}
       >
         {/* Top Bar */}
-        <header className="h-16 border-b border-border bg-background/80 backdrop-blur-sm sticky top-0 z-30">
-          <div className="h-full px-8 flex items-center justify-between">
-            <div className="text-sm text-text-muted">
-              Organization: <span className="text-text-primary font-medium">Acme Corp</span>
+        <header className="h-16 border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-30">
+          <div className="h-full px-6 flex items-center justify-between">
+            <div className="text-sm text-muted-foreground">
+              Organization: <span className="text-foreground font-medium">Acme Corp</span>
             </div>
             
             <div className="flex items-center gap-4">
               <Button variant="ghost" size="icon" className="relative">
-                <Bell className="h-5 w-5 stroke-[1.5px]" />
-                <span className="absolute top-2 right-2 w-2 h-2 bg-status-negative rounded-full" />
+                <Bell className="h-5 w-5" />
+                <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full" />
               </Button>
               
-              <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center text-sm font-medium text-primary border border-primary/20">
+              <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-sm font-medium text-primary">
                 AC
               </div>
             </div>

@@ -8,122 +8,59 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Synapse Ivory Theme - Premium Professional Aesthetic */
-    --brand-primary: 12 70% 56%;         /* #E15A3C - Muted industrial orange */
-    --brand-primary-hover: 12 59% 50%;   /* #CC4F34 */
-    --brand-primary-disabled: 12 60% 75%; /* #EAA797 */
+    /* Synapse Brand Colors */
+    --brand-primary: 11 100% 60%;        /* #FF5636 */
+    --brand-primary-600: 11 100% 55%;
+    --brand-accent: 11 100% 60%;
+    --brand-bg: 0 0% 5.5%;               /* #0E0E0E */
+    --brand-surface: 12 10% 16%;         /* #2B2625 */
+    --brand-muted: 30 15% 67%;           /* #B3ABA3 */
     
-    /* Neutrals - Ivory and Warm Grays */
-    --ivory-white: 36 33% 96%;           /* #F8F5EF */
-    --paper-white: 40 50% 98%;           /* #FCFBF8 */
-    --soft-warm-gray: 36 17% 82%;        /* #D9D4CC */
-    --medium-warm-gray: 36 13% 68%;      /* #B8B1A7 */
-    --cool-text-gray: 30 4% 28%;         /* #4A4743 */
-    --sidebar-bg: 36 18% 90%;            /* #ECE8E1 */
-    
-    /* Text Colors */
-    --text-primary: 30 6% 16%;           /* #2B2A28 */
-    --text-secondary: 30 4% 34%;         /* #595754 */
-    --text-muted: 30 5% 48%;             /* #7F7C77 */
-    --text-divider: 36 18% 88%;          /* #E6E2DB */
-    
-    /* Status Colors */
-    --status-positive: 141 37% 49%;      /* #4EA96C */
-    --status-warning: 35 64% 61%;        /* #DFA559 */
-    --status-negative: 0 53% 54%;        /* #C94949 */
-    
-    /* Chart Neutrals */
-    --chart-neutral-1: 36 18% 85%;       /* #E0DBD4 */
-    --chart-neutral-2: 36 13% 73%;       /* #C2BCB3 */
-    
-    /* Design System Tokens */
-    --background: 36 33% 96%;            /* Ivory white */
-    --background-secondary: 36 25% 94%;  /* Slightly warmer */
-    --foreground: 30 6% 16%;             /* Dark text */
+    /* Design System */
+    --background: 0 0% 5.5%;
+    --foreground: 30 15% 95%;
 
-    --card: 40 50% 98%;                  /* Paper white */
-    --card-foreground: 30 6% 16%;
+    --card: 12 10% 16%;
+    --card-foreground: 30 15% 95%;
 
-    --popover: 40 50% 98%;
-    --popover-foreground: 30 6% 16%;
+    --popover: 12 10% 14%;
+    --popover-foreground: 30 15% 95%;
 
-    --primary: 12 70% 56%;               /* Brand orange */
+    --primary: 11 100% 60%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 36 17% 82%;             /* Soft warm gray */
-    --secondary-foreground: 30 6% 16%;
+    --secondary: 12 10% 20%;
+    --secondary-foreground: 30 15% 95%;
 
-    --muted: 36 18% 88%;                 /* Light warm gray */
-    --muted-foreground: 30 5% 48%;
+    --muted: 12 10% 25%;
+    --muted-foreground: 30 15% 67%;
 
-    --accent: 12 70% 56%;
+    --accent: 11 100% 60%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 53% 54%;            /* Status negative */
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     
-    --success: 141 37% 49%;              /* Status positive */
+    --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
 
-    --border: 36 22% 89%;                /* Card border */
-    --input: 0 0% 100%;                  /* White input bg */
-    --input-border: 36 21% 85%;          /* Input border */
-    --ring: 12 70% 56%;                  /* Focus ring */
+    --border: 12 10% 25%;
+    --input: 12 10% 20%;
+    --ring: 11 100% 60%;
 
-    --radius: 1rem;                      /* 16px - premium rounded corners */
+    --radius: 0.75rem;
     
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(12 70% 56%), hsl(12 59% 50%));
-    --gradient-subtle: linear-gradient(180deg, hsl(40 50% 98%), hsl(36 33% 96%));
+    --gradient-primary: linear-gradient(135deg, hsl(11 100% 60%), hsl(11 100% 50%));
+    --gradient-dark: linear-gradient(180deg, hsl(0 0% 8%), hsl(0 0% 5.5%));
     
-    /* Shadows - Soft and Premium */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.04);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.06);
-    --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.04);
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.6);
+    --shadow-glow: 0 0 20px hsla(11, 100%, 60%, 0.3);
     
     /* Transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  
-  .dark {
-    --background: 0 0% 11%;              /* #1C1B1A */
-    --background-secondary: 0 0% 13%;
-    --foreground: 36 33% 96%;            /* #F5F1EA */
-
-    --card: 0 0% 15%;                    /* #262422 */
-    --card-foreground: 36 33% 96%;
-
-    --popover: 0 0% 15%;
-    --popover-foreground: 36 33% 96%;
-
-    --primary: 12 70% 56%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 0 0% 18%;
-    --secondary-foreground: 36 33% 96%;
-
-    --muted: 0 0% 20%;
-    --muted-foreground: 30 5% 65%;
-
-    --accent: 12 70% 56%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 53% 54%;
-    --destructive-foreground: 0 0% 100%;
-    
-    --success: 141 37% 49%;
-    --success-foreground: 0 0% 100%;
-
-    --border: 0 0% 20%;
-    --input: 0 0% 18%;
-    --input-border: 0 0% 25%;
-    --ring: 12 70% 56%;
-    
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.8);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
-    --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
 }
 
@@ -134,10 +71,7 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', 'Söhne', 'Aeonik', -apple-system, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
-    letter-spacing: 0.01em;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   }
   
   h1 {
