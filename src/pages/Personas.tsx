@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, Plus, Play, Edit, Download } from "lucide-react";
+import { Search, Plus, Play, Edit, Download, Trash2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import PersonaEditor from "@/components/PersonaEditor";
 import { supabase } from "@/integrations/supabase/client";
@@ -32,8 +32,22 @@ const Personas = () => {
     setSelectedPersonaId(undefined);
     setEditorOpen(true);
   };
+
+  const handleDelete = async (id: string) => {
+    const { error } = await supabase
+      .from("personas")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      console.error("Error deleting persona:", error);
+      return;
+    }
+
+    loadPersonas();
+  };
   const mockPersonas = [{
-    id: 1,
+    id: "demo-1",
     name: "Urban Saver",
     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=1",
     location: "Bengaluru",
@@ -48,7 +62,7 @@ const Personas = () => {
       extraversion: 0.4
     }
   }, {
-    id: 2,
+    id: "demo-2",
     name: "Green Advocate",
     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=2",
     location: "Mumbai",
@@ -63,7 +77,7 @@ const Personas = () => {
       extraversion: 0.6
     }
   }, {
-    id: 3,
+    id: "demo-3",
     name: "Luxury Seeker",
     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=3",
     location: "Delhi",
@@ -78,6 +92,8 @@ const Personas = () => {
       extraversion: 0.9
     }
   }];
+
+  const displayPersonas = [...mockPersonas, ...personas];
   return <AppShell>
       <div className="p-6 space-y-6">
         {/* Header */}
@@ -108,7 +124,7 @@ const Personas = () => {
 
         {/* Personas Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {(personas.length > 0 ? personas : mockPersonas).map(persona => {
+          {displayPersonas.map(persona => {
           const oceanScores = typeof persona.ocean_scores === 'object' && persona.ocean_scores !== null ? persona.ocean_scores as any : persona.OCEAN || {};
           const traits = Array.isArray(persona.traits) ? persona.traits : persona.traits || [];
           return <Card key={persona.id} className="p-6 hover:border-primary/50 transition-all group">
@@ -157,7 +173,7 @@ const Personas = () => {
                 </div>
 
                 <div className="pt-4 border-t border-border flex items-center justify-between">
-                  <p className="text-xs text-muted-foreground">Active {persona.lastActive}</p>
+                  <p className="text-xs text-muted-foreground">Active {persona.lastActive || persona.last_active || "recently"}</p>
                   <div className="flex gap-2">
                     <Button variant="ghost" size="icon">
                       <Play className="h-4 w-4" />
@@ -165,6 +181,16 @@ const Personas = () => {
                     <Button variant="ghost" size="icon" onClick={() => handleEdit(persona.id)}>
                       <Edit className="h-4 w-4" />
                     </Button>
+                    {!persona.id.toString().startsWith("demo-") && typeof persona.id === 'string' && (
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={() => handleDelete(persona.id)}
+                        className="text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>

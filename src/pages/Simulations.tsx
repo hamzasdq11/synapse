@@ -300,30 +300,16 @@ const Simulations = () => {
                       <SelectValue placeholder="Choose a campaign" />
                     </SelectTrigger>
                     <SelectContent>
-                      {defaultCampaigns.length > 0 && (
-                        <>
-                          <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
-                            Demo Campaigns
-                          </div>
-                          {defaultCampaigns.map((campaign) => (
-                            <SelectItem key={campaign.id} value={campaign.id}>
-                              {campaign.name} (Demo)
-                            </SelectItem>
-                          ))}
-                        </>
-                      )}
-                      {userCampaigns.length > 0 && (
-                        <>
-                          <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
-                            Your Campaigns
-                          </div>
-                          {userCampaigns.map((campaign) => (
-                            <SelectItem key={campaign.id} value={campaign.id}>
-                              {campaign.name}
-                            </SelectItem>
-                          ))}
-                        </>
-                      )}
+                      {defaultCampaigns.map((campaign) => (
+                        <SelectItem key={campaign.id} value={campaign.id}>
+                          {campaign.name}
+                        </SelectItem>
+                      ))}
+                      {userCampaigns.map((campaign) => (
+                        <SelectItem key={campaign.id} value={campaign.id}>
+                          {campaign.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -335,30 +321,16 @@ const Simulations = () => {
                       <SelectValue placeholder="Choose a persona" />
                     </SelectTrigger>
                     <SelectContent>
-                      {defaultPersonas.length > 0 && (
-                        <>
-                          <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
-                            Demo Personas
-                          </div>
-                          {defaultPersonas.map((persona) => (
-                            <SelectItem key={persona.id} value={persona.id}>
-                              {persona.name} (Demo)
-                            </SelectItem>
-                          ))}
-                        </>
-                      )}
-                      {userPersonas.length > 0 && (
-                        <>
-                          <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
-                            Your Personas
-                          </div>
-                          {userPersonas.map((persona) => (
-                            <SelectItem key={persona.id} value={persona.id}>
-                              {persona.name}
-                            </SelectItem>
-                          ))}
-                        </>
-                      )}
+                      {defaultPersonas.map((persona) => (
+                        <SelectItem key={persona.id} value={persona.id}>
+                          {persona.name}
+                        </SelectItem>
+                      ))}
+                      {userPersonas.map((persona) => (
+                        <SelectItem key={persona.id} value={persona.id}>
+                          {persona.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>

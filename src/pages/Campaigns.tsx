@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, Plus, Play, Copy, Archive, MoreVertical } from "lucide-react";
+import { Search, Plus, Play, Copy, Archive, MoreVertical, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   DropdownMenu,
@@ -31,6 +31,20 @@ const Campaigns = () => {
       .order("created_at", { ascending: false });
     
     if (data) setCampaigns(data);
+  };
+
+  const handleDelete = async (id: string) => {
+    const { error } = await supabase
+      .from("campaigns")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      console.error("Error deleting campaign:", error);
+      return;
+    }
+
+    loadCampaigns();
   };
 
   const mockCampaigns = [
@@ -137,6 +151,15 @@ const Campaigns = () => {
                         <Archive className="mr-2 h-4 w-4" />
                         Archive
                       </DropdownMenuItem>
+                      {!campaign.id.toString().startsWith("demo-") && (
+                        <DropdownMenuItem 
+                          onClick={() => handleDelete(campaign.id)}
+                          className="text-destructive"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Delete
+                        </DropdownMenuItem>
+                      )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
