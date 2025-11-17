@@ -107,7 +107,7 @@ const AppShell = ({ children }: AppShellProps) => {
         <header className="h-16 border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-30">
           <div className="h-full px-6 flex items-center justify-between">
             <div className="text-sm text-muted-foreground">
-              Organization: <span className="text-foreground font-medium">Acme Corp</span>
+              Organization: <span className="text-foreground font-medium">ElixrLabs</span>
             </div>
             
             <div className="flex items-center gap-4">

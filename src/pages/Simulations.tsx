@@ -83,29 +83,15 @@ const Simulations = () => {
   const [simulations, setSimulations] = useState<any[]>([]);
   const [activeSimulation, setActiveSimulation] = useState<any>(null);
   const [loading, setLoading] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [checkingAuth, setCheckingAuth] = useState(true);
 
   // Combine user data with defaults
   const campaigns = [...defaultCampaigns, ...userCampaigns];
   const personas = [...defaultPersonas, ...userPersonas];
 
   useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      toast.error("Please sign in to access simulations");
-      navigate("/auth");
-      return;
-    }
-    setIsAuthenticated(true);
-    setCheckingAuth(false);
     loadData();
     loadSimulations();
-  };
+  }, []);
 
   const loadData = async () => {
     const { data: campaignsData } = await supabase
@@ -279,22 +265,6 @@ const Simulations = () => {
     });
   };
 
-  if (checkingAuth) {
-    return (
-      <AppShell>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading...</p>
-          </div>
-        </div>
-      </AppShell>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return null;
-  }
 
   return (
     <AppShell>

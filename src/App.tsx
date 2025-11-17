@@ -11,7 +11,6 @@ import Personas from "./pages/Personas";
 import Simulations from "./pages/Simulations";
 import Insights from "./pages/Insights";
 import Settings from "./pages/Settings";
-import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,7 +23,6 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Landing />} />
-          <Route path="/auth" element={<Auth />} />
           <Route path="/app" element={<Dashboard />} />
           <Route path="/app/campaigns" element={<Campaigns />} />
           <Route path="/app/campaigns/:id" element={<CampaignDetail />} />
