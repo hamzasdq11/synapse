@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import Campaigns from "./pages/Campaigns";
 import CampaignDetail from "./pages/CampaignDetail";
 import Personas from "./pages/Personas";
+import Simulations from "./pages/Simulations";
 import Insights from "./pages/Insights";
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/app/campaigns" element={<Campaigns />} />
           <Route path="/app/campaigns/:id" element={<CampaignDetail />} />
           <Route path="/app/personas" element={<Personas />} />
+          <Route path="/app/simulations" element={<Simulations />} />
           <Route path="/app/insights" element={<Insights />} />
           <Route path="/app/settings" element={<Settings />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

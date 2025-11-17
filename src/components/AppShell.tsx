@@ -10,7 +10,8 @@ import {
   Plus,
   Menu,
   X,
-  Bell
+  Bell,
+  Zap
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +23,7 @@ const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/app" },
   { icon: Megaphone, label: "Campaigns", path: "/app/campaigns" },
   { icon: Users, label: "Personas", path: "/app/personas" },
+  { icon: Zap, label: "Simulations", path: "/app/simulations" },
   { icon: BarChart3, label: "Insights", path: "/app/insights" },
   { icon: Settings, label: "Settings", path: "/app/settings" },
 ];
