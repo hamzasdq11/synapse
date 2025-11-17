@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { TrendingUp, Users, Megaphone, Activity, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import AcademicBanner from "@/components/AcademicBanner";
 
 const Dashboard = () => {
   const stats = [
@@ -117,6 +118,7 @@ const Dashboard = () => {
           </Card>
         </div>
       </div>
+      <AcademicBanner />
     </AppShell>
   );
 };

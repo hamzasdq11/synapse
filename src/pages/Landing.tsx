@@ -44,9 +44,9 @@ const Landing = () => {
             </div>
             
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
-              Transform Ad Engagement with
+              A New Marketing Paradigm:
               <span className="block bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                AI-to-AI Negotiation
+                AI Twins Negotiate on Behalf of Consumers.
               </span>
             </h1>
             
