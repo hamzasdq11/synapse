@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { campaignId, personaId } = await req.json();
+    const { campaignId, personaId, model = 'gpt-4o' } = await req.json();
     const authHeader = req.headers.get('Authorization')!;
     
     const supabase = createClient(
@@ -42,15 +42,65 @@ Deno.serve(async (req) => {
       throw new Error('Campaign or persona not found');
     }
 
-    // Call OpenAI to simulate negotiation
-    const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
+    // Call AI API to simulate negotiation
+    let apiResponse;
+    
+    if (model === 'gemini-2.5-flash') {
+      // Call Google Gemini API
+      apiResponse = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': Deno.env.get('GEMINI_API_KEY') || '',
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: `You are simulating a realistic, extended negotiation between a brand and a consumer persona. 
+            
+Consumer Persona:
+- Name: ${persona.name}
+- Age: ${persona.age}, Location: ${persona.location}
+- Income: ₹${persona.income}
+- Trust Score: ${(persona.trust_score * 100).toFixed(0)}%
+- Price Sensitivity: ${(persona.price_sensitivity * 100).toFixed(0)}%
+- Privacy Threshold: ${(persona.privacy_threshold * 100).toFixed(0)}%
+
+Campaign Offer:
+- Product: ${campaign.product_name}
+- Price: ₹${campaign.price}
+- Description: ${campaign.description || 'Premium product'}
+
+Generate a realistic, multi-turn negotiation with AT LEAST 10-15 message exchanges. The negotiation should:
+1. Start with the brand's initial pitch
+2. Include consumer questions about features, warranty, and price
+3. Show brand responses addressing concerns
+4. Include price negotiations with counter-offers
+5. Discuss value propositions and benefits
+6. Show the consumer's thought process
+7. Include objections and how the brand handles them
+8. Build to a natural conclusion (acceptance, rejection, or counter-offer)
+
+Make it feel like a real human conversation - not rushed. The consumer should respond based on their personality traits and sensitivities. 
+
+Format as a JSON array of messages with: {"actor": "brand"|"consumer", "text": "message", "sentiment": number between -1 and 1}.`
+            }]
+          }],
+          generationConfig: {
+            temperature: 0.8,
+          }
+        }),
+      });
+    } else {
+      // Call OpenAI API
+      apiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
@@ -90,16 +140,23 @@ Format as a JSON array of messages with: {"actor": "brand"|"consumer", "text": "
         ],
         temperature: 0.8,
       }),
-    });
-
-    if (!openaiResponse.ok) {
-      const error = await openaiResponse.text();
-      console.error('OpenAI error:', error);
-      throw new Error('OpenAI API failed');
+      });
     }
 
-    const aiData = await openaiResponse.json();
-    const simulationText = aiData.choices[0].message.content;
+    if (!apiResponse.ok) {
+      const error = await apiResponse.text();
+      console.error('API error:', error);
+      throw new Error(`${model} API failed`);
+    }
+
+    const aiData = await apiResponse.json();
+    let simulationText;
+    
+    if (model === 'gemini-2.5-flash') {
+      simulationText = aiData.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    } else {
+      simulationText = aiData.choices[0].message.content;
+    }
     
     // Parse the AI response to extract transcript
     let transcript: any[] = [];
