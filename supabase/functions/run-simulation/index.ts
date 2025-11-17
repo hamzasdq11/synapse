@@ -54,29 +54,46 @@ Deno.serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `You are simulating a negotiation between a brand and a consumer persona. 
-            
+            content: `You are simulating a realistic, human-like negotiation between a brand and a consumer AI twin. This should feel natural, with gradual progression and reasonable back-and-forth.
+
 Consumer Persona:
 - Name: ${persona.name}
 - Age: ${persona.age}, Location: ${persona.location}
 - Income: ₹${persona.income}
-- Trust Score: ${(persona.trust_score * 100).toFixed(0)}%
-- Price Sensitivity: ${(persona.price_sensitivity * 100).toFixed(0)}%
-- Privacy Threshold: ${(persona.privacy_threshold * 100).toFixed(0)}%
+- Trust Score: ${(persona.trust_score * 100).toFixed(0)}% (how much they trust brands)
+- Price Sensitivity: ${(persona.price_sensitivity * 100).toFixed(0)}% (higher = more price-conscious)
+- Privacy Threshold: ${(persona.privacy_threshold * 100).toFixed(0)}% (concerns about data sharing)
 
 Campaign Offer:
 - Product: ${campaign.product_name}
 - Price: ₹${campaign.price}
 - Description: ${campaign.description || 'Premium product'}
 
-Simulate a realistic negotiation. The consumer should respond based on their personality traits and sensitivities. Generate 3-5 message exchanges, ending with either acceptance, rejection, or a counter-offer. Format as JSON array of messages with: {"actor": "brand"|"consumer", "text": "message", "sentiment": number between -1 and 1}.`
+IMPORTANT INSTRUCTIONS:
+1. Generate 8-12 message exchanges (not just 3-5) to create an extensive, realistic negotiation
+2. Make the conversation flow naturally - the consumer should ask questions, express concerns, and think through the offer
+3. The brand should respond to objections with reasoning, address concerns, and potentially offer compromises
+4. Consider the persona's traits - high price sensitivity means more haggling, low trust means more skepticism
+5. Include natural elements like:
+   - Questions about product features, warranty, or return policy
+   - Concerns about price relative to income level
+   - Requests for discounts or bundles
+   - Comparisons to alternatives
+   - Privacy concerns if relevant
+   - Time to think/consider
+6. The negotiation should build gradually - don't rush to acceptance or rejection
+7. End with a realistic outcome: acceptance (possibly after concessions), rejection with clear reasoning, or a counter-offer
+
+Format as a JSON array of messages with: {"actor": "brand"|"consumer", "text": "message", "sentiment": number between -1 and 1}
+
+The sentiment should reflect the emotional tone: -1 (very negative/frustrated) to 1 (very positive/excited), with 0 being neutral.`
           },
           {
             role: 'user',
-            content: 'Start the negotiation simulation.'
+            content: 'Start the negotiation simulation. Remember to make it extensive (8-12 exchanges), natural, and human-like with realistic concerns and responses.'
           }
         ],
-        temperature: 0.8,
+        temperature: 0.9,
       }),
     });
 
