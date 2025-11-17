@@ -1,6 +1,3 @@
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { createClient } from "jsr:@supabase/supabase-js@2";
-
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -12,31 +9,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { campaignId, personaId } = await req.json();
-    const authHeader = req.headers.get('Authorization')!;
-    
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_PUBLISHABLE_KEY') ?? '',
-      { global: { headers: { Authorization: authHeader } } }
-    );
-
-    // Get user
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Not authenticated');
-
-    // Get campaign and persona
-    const { data: campaign } = await supabase
-      .from('campaigns')
-      .select('*')
-      .eq('id', campaignId)
-      .single();
-
-    const { data: persona } = await supabase
-      .from('personas')
-      .select('*')
-      .eq('id', personaId)
-      .single();
+    const { campaignId, personaId, campaign, persona } = await req.json();
 
     if (!campaign || !persona) {
       throw new Error('Campaign or persona not found');
@@ -131,42 +104,14 @@ The sentiment should reflect the emotional tone: -1 (very negative/frustrated) t
     // Calculate metrics
     const acceptanceRate = outcome === 'accepted' ? 1 : outcome === 'counter' ? 0.5 : 0;
 
-    // Create simulation record
-    const { data: simulation, error: simError } = await supabase
-      .from('simulations')
-      .insert({
-        user_id: user.id,
-        campaign_id: campaignId,
-        persona_id: personaId,
-        status: 'completed',
-        outcome,
-        transcript,
-        metrics: {
-          acceptanceRate,
-          sentimentAvg: transcript.reduce((acc, m) => acc + (m.sentiment || 0), 0) / transcript.length,
-        },
-      })
-      .select()
-      .single();
-
-    if (simError) throw simError;
-
-    // Update campaign acceptance rate
-    const { data: allSims } = await supabase
-      .from('simulations')
-      .select('outcome')
-      .eq('campaign_id', campaignId);
-
-    if (allSims) {
-      const accepted = allSims.filter(s => s.outcome === 'accepted').length;
-      const total = allSims.length;
-      const newRate = total > 0 ? accepted / total : 0;
-
-      await supabase
-        .from('campaigns')
-        .update({ acceptance_rate: newRate })
-        .eq('id', campaignId);
-    }
+    const simulation = {
+      outcome,
+      transcript,
+      metrics: {
+        acceptanceRate,
+        sentimentAvg: transcript.reduce((acc, m) => acc + (m.sentiment || 0), 0) / transcript.length,
+      },
+    };
 
     return new Response(JSON.stringify({ simulation }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -174,7 +119,8 @@ The sentiment should reflect the emotional tone: -1 (very negative/frustrated) t
 
   } catch (error) {
     console.error('Error:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return new Response(JSON.stringify({ error: errorMessage }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
