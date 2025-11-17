@@ -27,14 +27,14 @@ const CampaignWizard = ({ open, onOpenChange, onSave }: CampaignWizardProps) => 
     setLoading(true);
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Not authenticated");
+      // Use constant anonymous user ID since there's no authentication
+      const ANONYMOUS_USER_ID = "00000000-0000-0000-0000-000000000000";
 
       const { error } = await supabase
         .from("campaigns")
         .insert({
           ...formData,
-          user_id: user.id,
+          user_id: ANONYMOUS_USER_ID,
           price: parseFloat(formData.price),
           status: "draft",
         });

@@ -164,11 +164,13 @@ const Simulations = () => {
       if (campaign.isDemo || persona.isDemo) {
         await simulateDemoNegotiation(campaign, persona);
       } else {
-        // Real simulation via edge function
+        // Real simulation via edge function - pass full objects
         const { data, error } = await supabase.functions.invoke("run-simulation", {
           body: {
             campaignId: selectedCampaign,
             personaId: selectedPersona,
+            campaign,
+            persona,
           },
         });
 
@@ -177,6 +179,18 @@ const Simulations = () => {
         if (!data?.simulation) {
           throw new Error("Invalid response from simulation");
         }
+
+        // Save to database
+        const ANONYMOUS_USER_ID = "00000000-0000-0000-0000-000000000000";
+        await supabase.from("simulations").insert({
+          user_id: ANONYMOUS_USER_ID,
+          campaign_id: selectedCampaign,
+          persona_id: selectedPersona,
+          status: "completed",
+          outcome: data.simulation.outcome,
+          transcript: data.simulation.transcript,
+          metrics: data.simulation.metrics,
+        });
 
         setActiveSimulation({
           ...data.simulation,
