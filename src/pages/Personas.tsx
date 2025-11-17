@@ -8,7 +8,6 @@ import { Search, Plus, Play, Edit, Download, Trash2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import PersonaEditor from "@/components/PersonaEditor";
 import { supabase } from "@/integrations/supabase/client";
-import AcademicBanner from "@/components/AcademicBanner";
 const Personas = () => {
   const [personas, setPersonas] = useState<any[]>([]);
   const [editorOpen, setEditorOpen] = useState(false);
@@ -200,7 +199,6 @@ const Personas = () => {
 
         <PersonaEditor open={editorOpen} onOpenChange={setEditorOpen} personaId={selectedPersonaId} onSave={loadPersonas} />
       </div>
-      <AcademicBanner />
     </AppShell>;
 };
 export default Personas;

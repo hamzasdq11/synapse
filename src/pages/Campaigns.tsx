@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import CampaignWizard from "@/components/CampaignWizard";
 import { supabase } from "@/integrations/supabase/client";
-import AcademicBanner from "@/components/AcademicBanner";
 
 const Campaigns = () => {
   const [campaigns, setCampaigns] = useState<any[]>([]);
@@ -192,7 +191,6 @@ const Campaigns = () => {
           onSave={loadCampaigns}
         />
       </div>
-      <AcademicBanner />
     </AppShell>
   );
 };

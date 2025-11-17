@@ -10,7 +10,6 @@ import { Play, User, Package, TrendingUp, MessageSquare, Plus, AlertCircle } fro
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import AcademicBanner from "@/components/AcademicBanner";
 
 // Default demo data
 const defaultCampaigns = [
@@ -592,7 +591,6 @@ const Simulations = () => {
           </TabsContent>
         </Tabs>
       </div>
-      <AcademicBanner />
     </AppShell>
   );
 };
