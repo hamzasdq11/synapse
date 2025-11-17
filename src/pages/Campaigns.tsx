@@ -35,7 +35,7 @@ const Campaigns = () => {
 
   const mockCampaigns = [
     {
-      id: 1,
+      id: "demo-1",
       name: "SmartWatch X Launch",
       status: "active",
       acceptance_rate: 0.85,
@@ -44,7 +44,7 @@ const Campaigns = () => {
       image_url: "https://images.unsplash.com/photo-1523275335684-37898b6baf30"
     },
     {
-      id: 2,
+      id: "demo-2",
       name: "Eco-Friendly Bundle",
       status: "active",
       acceptance_rate: 0.67,
@@ -53,7 +53,7 @@ const Campaigns = () => {
       image_url: "https://images.unsplash.com/photo-1542291026-7eec264c27ff"
     },
     {
-      id: 3,
+      id: "demo-3",
       name: "Premium Membership",
       status: "draft",
       acceptance_rate: 0,
@@ -63,7 +63,8 @@ const Campaigns = () => {
     },
   ];
 
-  const displayCampaigns = campaigns.length > 0 ? campaigns : mockCampaigns;
+  // Always show mock campaigns + user campaigns
+  const displayCampaigns = [...mockCampaigns, ...campaigns];
 
   return (
     <AppShell>
