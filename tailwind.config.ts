@@ -17,11 +17,16 @@ export default {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
+        background: {
+          DEFAULT: "hsl(var(--background))",
+          secondary: "hsl(var(--background-secondary))",
+        },
         foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          hover: "hsl(var(--brand-primary-hover))",
+          disabled: "hsl(var(--brand-primary-disabled))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -53,10 +58,31 @@ export default {
         },
         brand: {
           primary: "hsl(var(--brand-primary))",
-          accent: "hsl(var(--brand-accent))",
-          bg: "hsl(var(--brand-bg))",
-          surface: "hsl(var(--brand-surface))",
-          muted: "hsl(var(--brand-muted))",
+          hover: "hsl(var(--brand-primary-hover))",
+          disabled: "hsl(var(--brand-primary-disabled))",
+        },
+        neutral: {
+          ivory: "hsl(var(--ivory-white))",
+          paper: "hsl(var(--paper-white))",
+          soft: "hsl(var(--soft-warm-gray))",
+          medium: "hsl(var(--medium-warm-gray))",
+          cool: "hsl(var(--cool-text-gray))",
+          sidebar: "hsl(var(--sidebar-bg))",
+        },
+        text: {
+          primary: "hsl(var(--text-primary))",
+          secondary: "hsl(var(--text-secondary))",
+          muted: "hsl(var(--text-muted))",
+          divider: "hsl(var(--text-divider))",
+        },
+        status: {
+          positive: "hsl(var(--status-positive))",
+          warning: "hsl(var(--status-warning))",
+          negative: "hsl(var(--status-negative))",
+        },
+        chart: {
+          neutral1: "hsl(var(--chart-neutral-1))",
+          neutral2: "hsl(var(--chart-neutral-2))",
         },
       },
       borderRadius: {
