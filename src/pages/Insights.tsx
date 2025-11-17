@@ -1,6 +1,7 @@
 import AppShell from "@/components/AppShell";
 import { Card } from "@/components/ui/card";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import AcademicBanner from "@/components/AcademicBanner";
 
 const Insights = () => {
   const acceptanceData = [
@@ -127,6 +128,7 @@ const Insights = () => {
           </Card>
         </div>
       </div>
+      <AcademicBanner />
     </AppShell>
   );
 };

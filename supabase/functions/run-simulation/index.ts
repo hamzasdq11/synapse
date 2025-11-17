@@ -1,3 +1,6 @@
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "jsr:@supabase/supabase-js@2";
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -9,7 +12,31 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { campaignId, personaId, campaign, persona } = await req.json();
+    const { campaignId, personaId } = await req.json();
+    const authHeader = req.headers.get('Authorization')!;
+    
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_PUBLISHABLE_KEY') ?? '',
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    // Get user
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    // Get campaign and persona
+    const { data: campaign } = await supabase
+      .from('campaigns')
+      .select('*')
+      .eq('id', campaignId)
+      .single();
+
+    const { data: persona } = await supabase
+      .from('personas')
+      .select('*')
+      .eq('id', personaId)
+      .single();
 
     if (!campaign || !persona) {
       throw new Error('Campaign or persona not found');
@@ -27,46 +54,29 @@ Deno.serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `You are simulating a realistic, human-like negotiation between a brand and a consumer AI twin. This should feel natural, with gradual progression and reasonable back-and-forth.
-
+            content: `You are simulating a negotiation between a brand and a consumer persona. 
+            
 Consumer Persona:
 - Name: ${persona.name}
 - Age: ${persona.age}, Location: ${persona.location}
 - Income: ₹${persona.income}
-- Trust Score: ${(persona.trust_score * 100).toFixed(0)}% (how much they trust brands)
-- Price Sensitivity: ${(persona.price_sensitivity * 100).toFixed(0)}% (higher = more price-conscious)
-- Privacy Threshold: ${(persona.privacy_threshold * 100).toFixed(0)}% (concerns about data sharing)
+- Trust Score: ${(persona.trust_score * 100).toFixed(0)}%
+- Price Sensitivity: ${(persona.price_sensitivity * 100).toFixed(0)}%
+- Privacy Threshold: ${(persona.privacy_threshold * 100).toFixed(0)}%
 
 Campaign Offer:
 - Product: ${campaign.product_name}
 - Price: ₹${campaign.price}
 - Description: ${campaign.description || 'Premium product'}
 
-IMPORTANT INSTRUCTIONS:
-1. Generate 8-12 message exchanges (not just 3-5) to create an extensive, realistic negotiation
-2. Make the conversation flow naturally - the consumer should ask questions, express concerns, and think through the offer
-3. The brand should respond to objections with reasoning, address concerns, and potentially offer compromises
-4. Consider the persona's traits - high price sensitivity means more haggling, low trust means more skepticism
-5. Include natural elements like:
-   - Questions about product features, warranty, or return policy
-   - Concerns about price relative to income level
-   - Requests for discounts or bundles
-   - Comparisons to alternatives
-   - Privacy concerns if relevant
-   - Time to think/consider
-6. The negotiation should build gradually - don't rush to acceptance or rejection
-7. End with a realistic outcome: acceptance (possibly after concessions), rejection with clear reasoning, or a counter-offer
-
-Format as a JSON array of messages with: {"actor": "brand"|"consumer", "text": "message", "sentiment": number between -1 and 1}
-
-The sentiment should reflect the emotional tone: -1 (very negative/frustrated) to 1 (very positive/excited), with 0 being neutral.`
+Simulate a realistic negotiation. The consumer should respond based on their personality traits and sensitivities. Generate 3-5 message exchanges, ending with either acceptance, rejection, or a counter-offer. Format as JSON array of messages with: {"actor": "brand"|"consumer", "text": "message", "sentiment": number between -1 and 1}.`
           },
           {
             role: 'user',
-            content: 'Start the negotiation simulation. Remember to make it extensive (8-12 exchanges), natural, and human-like with realistic concerns and responses.'
+            content: 'Start the negotiation simulation.'
           }
         ],
-        temperature: 0.9,
+        temperature: 0.8,
       }),
     });
 
@@ -104,14 +114,42 @@ The sentiment should reflect the emotional tone: -1 (very negative/frustrated) t
     // Calculate metrics
     const acceptanceRate = outcome === 'accepted' ? 1 : outcome === 'counter' ? 0.5 : 0;
 
-    const simulation = {
-      outcome,
-      transcript,
-      metrics: {
-        acceptanceRate,
-        sentimentAvg: transcript.reduce((acc, m) => acc + (m.sentiment || 0), 0) / transcript.length,
-      },
-    };
+    // Create simulation record
+    const { data: simulation, error: simError } = await supabase
+      .from('simulations')
+      .insert({
+        user_id: user.id,
+        campaign_id: campaignId,
+        persona_id: personaId,
+        status: 'completed',
+        outcome,
+        transcript,
+        metrics: {
+          acceptanceRate,
+          sentimentAvg: transcript.reduce((acc, m) => acc + (m.sentiment || 0), 0) / transcript.length,
+        },
+      })
+      .select()
+      .single();
+
+    if (simError) throw simError;
+
+    // Update campaign acceptance rate
+    const { data: allSims } = await supabase
+      .from('simulations')
+      .select('outcome')
+      .eq('campaign_id', campaignId);
+
+    if (allSims) {
+      const accepted = allSims.filter(s => s.outcome === 'accepted').length;
+      const total = allSims.length;
+      const newRate = total > 0 ? accepted / total : 0;
+
+      await supabase
+        .from('campaigns')
+        .update({ acceptance_rate: newRate })
+        .eq('id', campaignId);
+    }
 
     return new Response(JSON.stringify({ simulation }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -119,8 +157,7 @@ The sentiment should reflect the emotional tone: -1 (very negative/frustrated) t
 
   } catch (error) {
     console.error('Error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    return new Response(JSON.stringify({ error: errorMessage }), {
+    return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
