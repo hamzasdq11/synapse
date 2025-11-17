@@ -2,28 +2,22 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Zap, Users, TrendingUp, Play } from "lucide-react";
 import { Link } from "react-router-dom";
 import hamzaProfile from "@/assets/hamza-profile.jpg";
-
 const Landing = () => {
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       {/* Academic Banner */}
       <section className="bg-card border-b border-border">
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-5xl mx-auto">
             <div className="flex flex-col md:flex-row items-center gap-8">
               <div className="flex-shrink-0">
-                <img 
-                  src={hamzaProfile} 
-                  alt="Mohammad Hamza Siddiqui" 
-                  className="w-32 h-32 rounded-full object-cover border-2 border-primary/20"
-                />
+                <img src={hamzaProfile} alt="Mohammad Hamza Siddiqui" className="w-32 h-32 rounded-full object-cover border-2 border-primary/20" />
               </div>
               <div className="flex-1 text-center md:text-left">
-                <p className="text-sm text-muted-foreground mb-2">
-                  Engineered in partial fulfilment of the requirements for the AI Assignment under the course
+                <p className="text-muted-foreground mb-2 text-xs">
+                  Engineered in partial fulfilment of the requirements for the AI Assignment under the course Introduction to Marketing Management    
                 </p>
                 <h3 className="text-lg font-semibold mb-2">
-                  Introduction to Marketing Management, Indian Institute of Management Ranchi
+                  Indian Institute of Management Ranchi
                 </h3>
                 <p className="text-sm text-muted-foreground mb-3">
                   <span className="font-medium">Faculty:</span> Prof. Shweta Jha
@@ -83,24 +77,19 @@ const Landing = () => {
           <h2 className="text-center mb-16">How It Works</h2>
           
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {[
-              {
-                icon: Zap,
-                title: "Upload Your Offer",
-                description: "Define your product, pricing, and data requirements. Our system creates intelligent Brand Agents.",
-              },
-              {
-                icon: Users,
-                title: "AI Agents Negotiate",
-                description: "Consumer Agents with unique personas engage in real-time negotiations, considering privacy, value, and preferences.",
-              },
-              {
-                icon: TrendingUp,
-                title: "Optimize & Convert",
-                description: "Gain insights from thousands of simulations. Maximize acceptance rates and customer lifetime value.",
-              },
-            ].map((step, i) => (
-              <div key={i} className="relative group">
+            {[{
+            icon: Zap,
+            title: "Upload Your Offer",
+            description: "Define your product, pricing, and data requirements. Our system creates intelligent Brand Agents."
+          }, {
+            icon: Users,
+            title: "AI Agents Negotiate",
+            description: "Consumer Agents with unique personas engage in real-time negotiations, considering privacy, value, and preferences."
+          }, {
+            icon: TrendingUp,
+            title: "Optimize & Convert",
+            description: "Gain insights from thousands of simulations. Maximize acceptance rates and customer lifetime value."
+          }].map((step, i) => <div key={i} className="relative group">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
                 <div className="relative p-8 bg-card border border-border rounded-2xl hover:border-primary/50 transition-all">
                   <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6">
@@ -109,8 +98,7 @@ const Landing = () => {
                   <h3 className="mb-3">{step.title}</h3>
                   <p className="text-muted-foreground">{step.description}</p>
                 </div>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </section>
@@ -121,25 +109,19 @@ const Landing = () => {
           <h2 className="text-center mb-16">Built for Modern Teams</h2>
           
           <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            {[
-              {
-                title: "Agencies",
-                description: "Deliver data-driven campaign optimization for clients with predictive negotiation insights.",
-              },
-              {
-                title: "D2C Brands",
-                description: "Increase conversion rates by understanding customer objections before they happen.",
-              },
-              {
-                title: "Enterprise",
-                description: "Scale personalization across millions of consumers while maintaining privacy compliance.",
-              },
-            ].map((useCase, i) => (
-              <div key={i} className="p-6 bg-card border border-border rounded-xl hover:border-primary/50 transition-all">
+            {[{
+            title: "Agencies",
+            description: "Deliver data-driven campaign optimization for clients with predictive negotiation insights."
+          }, {
+            title: "D2C Brands",
+            description: "Increase conversion rates by understanding customer objections before they happen."
+          }, {
+            title: "Enterprise",
+            description: "Scale personalization across millions of consumers while maintaining privacy compliance."
+          }].map((useCase, i) => <div key={i} className="p-6 bg-card border border-border rounded-xl hover:border-primary/50 transition-all">
                 <h3 className="mb-3">{useCase.title}</h3>
                 <p className="text-muted-foreground text-sm">{useCase.description}</p>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </section>
@@ -175,8 +157,6 @@ const Landing = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Landing;
