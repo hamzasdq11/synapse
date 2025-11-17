@@ -87,12 +87,11 @@ const AppShell = ({ children }: AppShellProps) => {
 
           {/* Quick Create */}
           {sidebarOpen && (
-            <div className="p-4 border-t border-border space-y-4">
+            <div className="p-4 border-t border-border">
               <Button className="w-full" size="sm">
                 <Plus className="mr-2 h-4 w-4" />
                 Quick Create
               </Button>
-              <AcademicBanner />
             </div>
           )}
         </div>
@@ -128,6 +127,7 @@ const AppShell = ({ children }: AppShellProps) => {
         {/* Page Content */}
         <main className="flex-1 overflow-auto">
           {children}
+          <AcademicBanner />
         </main>
       </div>
     </div>
