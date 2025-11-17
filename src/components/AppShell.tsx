@@ -14,6 +14,7 @@ import {
   Zap
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import AcademicBanner from "@/components/AcademicBanner";
 
 interface AppShellProps {
   children: ReactNode;
@@ -126,6 +127,7 @@ const AppShell = ({ children }: AppShellProps) => {
         {/* Page Content */}
         <main className="flex-1 overflow-auto">
           {children}
+          <AcademicBanner />
         </main>
       </div>
     </div>
