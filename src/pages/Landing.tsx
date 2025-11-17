@@ -62,10 +62,12 @@ const Landing = () => {
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Button size="lg" variant="outline" className="text-lg px-8">
-                <Play className="mr-2 h-5 w-5" />
-                Watch Demo
-              </Button>
+              <a href="https://www.loom.com/share/d08da7d0085b4c63be91ea4f314cb36e" target="_blank" rel="noopener noreferrer">
+                <Button size="lg" variant="outline" className="text-lg px-8">
+                  <Play className="mr-2 h-5 w-5" />
+                  Watch Demo
+                </Button>
+              </a>
             </div>
           </div>
         </div>
