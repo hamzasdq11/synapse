@@ -3,7 +3,6 @@ import AppShell from "@/components/AppShell";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import AcademicBanner from "@/components/AcademicBanner";
 
 const Settings = () => {
   const [organizationName, setOrganizationName] = useState("ElixrLabs");
@@ -39,7 +38,6 @@ const Settings = () => {
           </div>
         </Card>
       </div>
-      <AcademicBanner />
     </AppShell>
   );
 };
