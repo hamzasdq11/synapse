@@ -11,10 +11,73 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
+// Default demo data
+const defaultCampaigns = [
+  {
+    id: "demo-campaign-1",
+    name: "SmartWatch X Launch",
+    product_name: "SmartWatch X Pro",
+    description: "Premium fitness tracker with 7-day battery and health monitoring",
+    price: 12999,
+    currency: "INR",
+    status: "active",
+    isDemo: true,
+  },
+  {
+    id: "demo-campaign-2",
+    name: "Eco-Friendly Bundle",
+    product_name: "Sustainable Product Pack",
+    description: "Eco-conscious products for environmentally aware consumers",
+    price: 2499,
+    currency: "INR",
+    status: "active",
+    isDemo: true,
+  },
+];
+
+const defaultPersonas = [
+  {
+    id: "demo-persona-1",
+    name: "Urban Saver",
+    age: 28,
+    location: "Bengaluru",
+    income: 600000,
+    trust_score: 0.72,
+    price_sensitivity: 0.85,
+    privacy_threshold: 0.65,
+    ocean_scores: { openness: 0.6, conscientiousness: 0.8, extraversion: 0.4, agreeableness: 0.7, neuroticism: 0.2 },
+    isDemo: true,
+  },
+  {
+    id: "demo-persona-2",
+    name: "Green Advocate",
+    age: 34,
+    location: "Mumbai",
+    income: 1200000,
+    trust_score: 0.85,
+    price_sensitivity: 0.45,
+    privacy_threshold: 0.70,
+    ocean_scores: { openness: 0.8, conscientiousness: 0.7, extraversion: 0.6, agreeableness: 0.8, neuroticism: 0.3 },
+    isDemo: true,
+  },
+  {
+    id: "demo-persona-3",
+    name: "Luxury Seeker",
+    age: 42,
+    location: "Delhi",
+    income: 2500000,
+    trust_score: 0.91,
+    price_sensitivity: 0.25,
+    privacy_threshold: 0.50,
+    ocean_scores: { openness: 0.7, conscientiousness: 0.6, extraversion: 0.9, agreeableness: 0.6, neuroticism: 0.2 },
+    isDemo: true,
+  },
+];
+
 const Simulations = () => {
   const navigate = useNavigate();
-  const [campaigns, setCampaigns] = useState<any[]>([]);
-  const [personas, setPersonas] = useState<any[]>([]);
+  const [userCampaigns, setUserCampaigns] = useState<any[]>([]);
+  const [userPersonas, setUserPersonas] = useState<any[]>([]);
   const [selectedCampaign, setSelectedCampaign] = useState<string>("");
   const [selectedPersona, setSelectedPersona] = useState<string>("");
   const [simulations, setSimulations] = useState<any[]>([]);
@@ -22,6 +85,10 @@ const Simulations = () => {
   const [loading, setLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
+
+  // Combine user data with defaults
+  const campaigns = [...defaultCampaigns, ...userCampaigns];
+  const personas = [...defaultPersonas, ...userPersonas];
 
   useEffect(() => {
     checkAuth();
@@ -51,8 +118,8 @@ const Simulations = () => {
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (campaignsData) setCampaigns(campaignsData);
-    if (personasData) setPersonas(personasData);
+    if (campaignsData) setUserCampaigns(campaignsData);
+    if (personasData) setUserPersonas(personasData);
   };
 
   const loadSimulations = async () => {
@@ -78,6 +145,11 @@ const Simulations = () => {
     const campaign = campaigns.find(c => c.id === selectedCampaign);
     const persona = personas.find(p => p.id === selectedPersona);
 
+    if (!campaign || !persona) {
+      toast.error("Selected campaign or persona not found");
+      return;
+    }
+
     setLoading(true);
     setActiveSimulation({
       status: "running",
@@ -89,8 +161,8 @@ const Simulations = () => {
     // Simulate progressive message loading for better UX
     const simulateProgress = () => {
       const messages = [
-        { actor: 'brand', text: 'Initializing negotiation...', sentiment: 0 },
-        { actor: 'consumer', text: 'Analyzing offer...', sentiment: 0 },
+        { actor: 'brand', text: `Introducing ${campaign.product_name || campaign.name} for ₹${campaign.price}...`, sentiment: 0.5 },
+        { actor: 'consumer', text: `Analyzing the offer based on my preferences...`, sentiment: 0 },
       ];
       
       setActiveSimulation((prev: any) => ({
@@ -102,25 +174,31 @@ const Simulations = () => {
     setTimeout(simulateProgress, 500);
 
     try {
-      const { data, error } = await supabase.functions.invoke("run-simulation", {
-        body: {
-          campaignId: selectedCampaign,
-          personaId: selectedPersona,
-        },
-      });
+      // For demo campaigns/personas, simulate locally
+      if (campaign.isDemo || persona.isDemo) {
+        await simulateDemoNegotiation(campaign, persona);
+      } else {
+        // Real simulation via edge function
+        const { data, error } = await supabase.functions.invoke("run-simulation", {
+          body: {
+            campaignId: selectedCampaign,
+            personaId: selectedPersona,
+          },
+        });
 
-      if (error) throw error;
+        if (error) throw error;
 
-      if (!data?.simulation) {
-        throw new Error("Invalid response from simulation");
+        if (!data?.simulation) {
+          throw new Error("Invalid response from simulation");
+        }
+
+        setActiveSimulation({
+          ...data.simulation,
+          status: "completed",
+          campaign,
+          persona,
+        });
       }
-
-      setActiveSimulation({
-        ...data.simulation,
-        status: "completed",
-        campaign,
-        persona,
-      });
 
       toast.success("Simulation completed!");
       await loadSimulations();
@@ -131,6 +209,66 @@ const Simulations = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const simulateDemoNegotiation = async (campaign: any, persona: any) => {
+    // Simulate a realistic negotiation based on persona traits
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    const pricePoint = campaign.price;
+    const sensitivity = persona.price_sensitivity;
+    const trustScore = persona.trust_score;
+    
+    const transcript = [
+      {
+        actor: 'brand',
+        text: `We're offering ${campaign.product_name} for ₹${pricePoint}. ${campaign.description}`,
+        sentiment: 0.6,
+      },
+      {
+        actor: 'consumer',
+        text: sensitivity > 0.7 
+          ? `The price seems high for my budget. I'm looking for something around ₹${Math.round(pricePoint * 0.7)}.`
+          : `Interesting product. Can you tell me more about the features and warranty?`,
+        sentiment: sensitivity > 0.7 ? -0.3 : 0.1,
+      },
+      {
+        actor: 'brand',
+        text: sensitivity > 0.7
+          ? `I understand your concern. We can offer a 15% discount, bringing it to ₹${Math.round(pricePoint * 0.85)}.`
+          : `It comes with a 2-year warranty and 24/7 customer support. Premium quality guaranteed.`,
+        sentiment: 0.4,
+      },
+      {
+        actor: 'consumer',
+        text: trustScore > 0.8 && sensitivity < 0.5
+          ? `That sounds perfect! I'll take it at ₹${Math.round(pricePoint * 0.85)}.`
+          : sensitivity > 0.7
+          ? `Still a bit steep. Can we meet at ₹${Math.round(pricePoint * 0.75)}?`
+          : `Let me think about it. The warranty is good, but I need to compare with other options.`,
+        sentiment: trustScore > 0.8 && sensitivity < 0.5 ? 0.8 : sensitivity > 0.7 ? -0.2 : 0.0,
+      },
+    ];
+
+    const outcome = trustScore > 0.8 && sensitivity < 0.5 
+      ? 'accepted' 
+      : sensitivity > 0.7 
+      ? 'counter' 
+      : 'rejected';
+
+    const acceptanceRate = outcome === 'accepted' ? 1 : outcome === 'counter' ? 0.5 : 0;
+
+    setActiveSimulation({
+      status: "completed",
+      outcome,
+      transcript,
+      campaign,
+      persona,
+      metrics: {
+        acceptanceRate,
+        sentimentAvg: transcript.reduce((acc, m) => acc + (m.sentiment || 0), 0) / transcript.length,
+      },
+    });
   };
 
   const viewSimulation = (sim: any) => {
@@ -173,77 +311,97 @@ const Simulations = () => {
           </TabsList>
 
           <TabsContent value="run" className="space-y-6">
-            {campaigns.length === 0 || personas.length === 0 ? (
-              <Card className="p-8 text-center">
-                <AlertCircle className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                <h3 className="mb-2">Setup Required</h3>
-                <p className="text-muted-foreground mb-4">
-                  You need at least one campaign and one persona to run simulations.
-                </p>
-                <div className="flex gap-3 justify-center">
-                  {campaigns.length === 0 && (
-                    <Button onClick={() => navigate("/app/campaigns")}>
-                      <Plus className="mr-2 h-4 w-4" />
-                      Create Campaign
-                    </Button>
-                  )}
-                  {personas.length === 0 && (
-                    <Button onClick={() => navigate("/app/personas")} variant="outline">
-                      <Plus className="mr-2 h-4 w-4" />
-                      Create Persona
-                    </Button>
-                  )}
-                </div>
-              </Card>
-            ) : (
-              <>
-                <Card className="p-6">
-                  <h3 className="mb-4">Setup Simulation</h3>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm font-medium mb-2 block">Select Campaign</label>
-                      <Select value={selectedCampaign} onValueChange={setSelectedCampaign}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose a campaign" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {campaigns.map((campaign) => (
+            <Card className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3>Setup Simulation</h3>
+                {(userCampaigns.length > 0 || userPersonas.length > 0) && (
+                  <Badge variant="outline" className="text-xs">
+                    {userCampaigns.length} custom campaigns, {userPersonas.length} custom personas
+                  </Badge>
+                )}
+              </div>
+              
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Select Campaign</label>
+                  <Select value={selectedCampaign} onValueChange={setSelectedCampaign}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose a campaign" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {defaultCampaigns.length > 0 && (
+                        <>
+                          <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
+                            Demo Campaigns
+                          </div>
+                          {defaultCampaigns.map((campaign) => (
+                            <SelectItem key={campaign.id} value={campaign.id}>
+                              {campaign.name} (Demo)
+                            </SelectItem>
+                          ))}
+                        </>
+                      )}
+                      {userCampaigns.length > 0 && (
+                        <>
+                          <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
+                            Your Campaigns
+                          </div>
+                          {userCampaigns.map((campaign) => (
                             <SelectItem key={campaign.id} value={campaign.id}>
                               {campaign.name}
                             </SelectItem>
                           ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                        </>
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-                    <div>
-                      <label className="text-sm font-medium mb-2 block">Select Persona</label>
-                      <Select value={selectedPersona} onValueChange={setSelectedPersona}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose a persona" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {personas.map((persona) => (
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Select Persona</label>
+                  <Select value={selectedPersona} onValueChange={setSelectedPersona}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose a persona" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {defaultPersonas.length > 0 && (
+                        <>
+                          <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
+                            Demo Personas
+                          </div>
+                          {defaultPersonas.map((persona) => (
+                            <SelectItem key={persona.id} value={persona.id}>
+                              {persona.name} (Demo)
+                            </SelectItem>
+                          ))}
+                        </>
+                      )}
+                      {userPersonas.length > 0 && (
+                        <>
+                          <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
+                            Your Personas
+                          </div>
+                          {userPersonas.map((persona) => (
                             <SelectItem key={persona.id} value={persona.id}>
                               {persona.name}
                             </SelectItem>
                           ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
+                        </>
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
 
-                  <Button
-                    className="mt-4"
-                    onClick={runSimulation}
-                    disabled={!selectedCampaign || !selectedPersona || loading}
-                  >
-                    <Play className="mr-2 h-4 w-4" />
-                    {loading ? "Running Simulation..." : "Run Simulation"}
-                  </Button>
-                </Card>
-              </>
-            )}
+              <Button
+                className="mt-4"
+                onClick={runSimulation}
+                disabled={!selectedCampaign || !selectedPersona || loading}
+              >
+                <Play className="mr-2 h-4 w-4" />
+                {loading ? "Running Simulation..." : "Run Simulation"}
+              </Button>
+            </Card>
 
             {activeSimulation && (
               <Card className="p-6">
