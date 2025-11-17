@@ -54,7 +54,7 @@ Deno.serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `You are simulating a negotiation between a brand and a consumer persona. 
+            content: `You are simulating a realistic, extended negotiation between a brand and a consumer persona. 
             
 Consumer Persona:
 - Name: ${persona.name}
@@ -69,7 +69,19 @@ Campaign Offer:
 - Price: ₹${campaign.price}
 - Description: ${campaign.description || 'Premium product'}
 
-Simulate a realistic negotiation. The consumer should respond based on their personality traits and sensitivities. Generate 3-5 message exchanges, ending with either acceptance, rejection, or a counter-offer. Format as JSON array of messages with: {"actor": "brand"|"consumer", "text": "message", "sentiment": number between -1 and 1}.`
+Generate a realistic, multi-turn negotiation with AT LEAST 10-15 message exchanges. The negotiation should:
+1. Start with the brand's initial pitch
+2. Include consumer questions about features, warranty, and price
+3. Show brand responses addressing concerns
+4. Include price negotiations with counter-offers
+5. Discuss value propositions and benefits
+6. Show the consumer's thought process
+7. Include objections and how the brand handles them
+8. Build to a natural conclusion (acceptance, rejection, or counter-offer)
+
+Make it feel like a real human conversation - not rushed. The consumer should respond based on their personality traits and sensitivities. 
+
+Format as a JSON array of messages with: {"actor": "brand"|"consumer", "text": "message", "sentiment": number between -1 and 1}.`
           },
           {
             role: 'user',

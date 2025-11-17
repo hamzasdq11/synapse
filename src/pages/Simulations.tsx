@@ -199,7 +199,6 @@ const Simulations = () => {
   };
 
   const simulateDemoNegotiation = async (campaign: any, persona: any) => {
-    // Simulate a realistic negotiation based on persona traits
     await new Promise(resolve => setTimeout(resolve, 1500));
 
     const pricePoint = campaign.price;
@@ -209,35 +208,82 @@ const Simulations = () => {
     const transcript = [
       {
         actor: 'brand',
-        text: `We're offering ${campaign.product_name} for ₹${pricePoint}. ${campaign.description}`,
+        text: `Hello! I'm excited to introduce you to our ${campaign.product_name}. ${campaign.description}. The price is ₹${pricePoint}.`,
+        sentiment: 0.7,
+      },
+      {
+        actor: 'consumer',
+        text: `Hi, thanks for reaching out. The product looks interesting. Can you tell me more about what makes it special?`,
+        sentiment: 0.2,
+      },
+      {
+        actor: 'brand',
+        text: `Absolutely! This product features premium quality materials, comes with a 2-year comprehensive warranty, and includes 24/7 customer support. It's designed for durability and performance.`,
         sentiment: 0.6,
       },
       {
         actor: 'consumer',
         text: sensitivity > 0.7 
-          ? `The price seems high for my budget. I'm looking for something around ₹${Math.round(pricePoint * 0.7)}.`
-          : `Interesting product. Can you tell me more about the features and warranty?`,
-        sentiment: sensitivity > 0.7 ? -0.3 : 0.1,
+          ? `I appreciate the details. However, ₹${pricePoint} seems quite high for my budget. What's the best price you can offer?`
+          : `That sounds good. What about delivery and installation? Are those included?`,
+        sentiment: sensitivity > 0.7 ? -0.2 : 0.1,
       },
       {
         actor: 'brand',
         text: sensitivity > 0.7
-          ? `I understand your concern. We can offer a 15% discount, bringing it to ₹${Math.round(pricePoint * 0.85)}.`
-          : `It comes with a 2-year warranty and 24/7 customer support. Premium quality guaranteed.`,
+          ? `I understand budget is important. Let me see what I can do. For valued customers like you, we can offer a 10% discount, bringing it to ₹${Math.round(pricePoint * 0.9)}.`
+          : `Yes! Free delivery within 3-5 business days and professional installation is included at no extra cost.`,
+        sentiment: 0.5,
+      },
+      {
+        actor: 'consumer',
+        text: sensitivity > 0.7 
+          ? `That's better, but I was hoping for something closer to ₹${Math.round(pricePoint * 0.7)}. Is there any flexibility?`
+          : trustScore > 0.7 ? `That's great! What payment options do you accept?` : `Hmm, I'd like to think about it. Do you have any customer reviews I can check?`,
+        sentiment: sensitivity > 0.7 ? -0.3 : trustScore > 0.7 ? 0.3 : 0.0,
+      },
+      {
+        actor: 'brand',
+        text: sensitivity > 0.7
+          ? `I appreciate your interest. The best I can do is 15% off, which brings it to ₹${Math.round(pricePoint * 0.85)}. This includes all the premium features and warranty.`
+          : trustScore > 0.7 ? `We accept all major payment methods - credit cards, debit cards, UPI, and we also offer easy EMI options with 0% interest for 3 months.` : `Of course! We have a 4.5-star rating with over 2,000 verified customer reviews. I can send you the link right away.`,
         sentiment: 0.4,
       },
       {
         actor: 'consumer',
-        text: trustScore > 0.8 && sensitivity < 0.5
-          ? `That sounds perfect! I'll take it at ₹${Math.round(pricePoint * 0.85)}.`
-          : sensitivity > 0.7
-          ? `Still a bit steep. Can we meet at ₹${Math.round(pricePoint * 0.75)}?`
-          : `Let me think about it. The warranty is good, but I need to compare with other options.`,
-        sentiment: trustScore > 0.8 && sensitivity < 0.5 ? 0.8 : sensitivity > 0.7 ? -0.2 : 0.0,
+        text: sensitivity > 0.7 
+          ? `₹${Math.round(pricePoint * 0.85)} is still stretching my budget. Can we meet somewhere in the middle at ₹${Math.round(pricePoint * 0.75)}?`
+          : trustScore > 0.7 ? `The EMI option sounds perfect! I'd like to proceed with that.` : `Let me check those reviews first. Also, what's your return policy if I'm not satisfied?`,
+        sentiment: sensitivity > 0.7 ? -0.2 : trustScore > 0.7 ? 0.6 : 0.1,
+      },
+      {
+        actor: 'brand',
+        text: sensitivity > 0.7
+          ? `I really want to make this work for you. How about this - ₹${Math.round(pricePoint * 0.8)} final price, plus I'll throw in free extended warranty for an extra year. That's a ₹2,000 value.`
+          : trustScore > 0.7 ? `Wonderful! I'll process your order right away. You'll receive a confirmation email within minutes.` : `We offer a 30-day money-back guarantee with free return shipping. If you're not completely satisfied, full refund - no questions asked.`,
+        sentiment: sensitivity > 0.7 ? 0.3 : trustScore > 0.7 ? 0.8 : 0.5,
+      },
+      {
+        actor: 'consumer',
+        text: sensitivity > 0.7 && trustScore > 0.6
+          ? `You know what, that's a fair deal. The extended warranty sweetens it. Let's do ₹${Math.round(pricePoint * 0.8)}.`
+          : sensitivity > 0.7 ? `I need to think about this more. Can I get back to you in a day or two?`
+          : trustScore > 0.7 ? `Thank you! I'm looking forward to receiving it.`
+          : `The return policy is reassuring. Let me read through the reviews and I'll decide by tomorrow.`,
+        sentiment: sensitivity > 0.7 && trustScore > 0.6 ? 0.7 : sensitivity > 0.7 ? -0.1 : trustScore > 0.7 ? 0.9 : 0.2,
+      },
+      {
+        actor: 'brand',
+        text: sensitivity > 0.7 && trustScore > 0.6
+          ? `Excellent choice! I'll process your order right away. Welcome to our family of satisfied customers!`
+          : sensitivity > 0.7 ? `Absolutely, take your time. The offer will be valid for 48 hours. Feel free to reach out with any questions!`
+          : trustScore > 0.7 ? `You're very welcome! You've made a great choice. Thank you for your business!`
+          : `Of course! Take all the time you need. I'm confident you'll love what our customers are saying. Here's the review link, and I'm here if you have any questions!`,
+        sentiment: 0.7,
       },
     ];
 
-    const outcome = trustScore > 0.8 && sensitivity < 0.5 
+    const outcome = (sensitivity > 0.7 && trustScore > 0.6) || trustScore > 0.8
       ? 'accepted' 
       : sensitivity > 0.7 
       ? 'counter' 
