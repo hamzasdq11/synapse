@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import AppShell from "@/components/AppShell";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -5,9 +6,38 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Search, Plus, Play, Edit, Download } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import PersonaEditor from "@/components/PersonaEditor";
+import { supabase } from "@/integrations/supabase/client";
 
 const Personas = () => {
-  const personas = [
+  const [personas, setPersonas] = useState<any[]>([]);
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [selectedPersonaId, setSelectedPersonaId] = useState<string>();
+
+  useEffect(() => {
+    loadPersonas();
+  }, []);
+
+  const loadPersonas = async () => {
+    const { data } = await supabase
+      .from("personas")
+      .select("*")
+      .order("created_at", { ascending: false });
+    
+    if (data) setPersonas(data);
+  };
+
+  const handleEdit = (id: string) => {
+    setSelectedPersonaId(id);
+    setEditorOpen(true);
+  };
+
+  const handleCreate = () => {
+    setSelectedPersonaId(undefined);
+    setEditorOpen(true);
+  };
+
+  const mockPersonas = [
     {
       id: 1,
       name: "Urban Saver",
@@ -60,7 +90,7 @@ const Personas = () => {
               <Download className="mr-2 h-4 w-4" />
               Import
             </Button>
-            <Button>
+            <Button onClick={handleCreate}>
               <Plus className="mr-2 h-4 w-4" />
               New Persona
             </Button>
@@ -80,7 +110,13 @@ const Personas = () => {
 
         {/* Personas Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {personas.map((persona) => (
+          {(personas.length > 0 ? personas : mockPersonas).map((persona) => {
+            const oceanScores = typeof persona.ocean_scores === 'object' && persona.ocean_scores !== null
+              ? persona.ocean_scores as any
+              : persona.OCEAN || {};
+            const traits = Array.isArray(persona.traits) ? persona.traits : persona.traits || [];
+
+            return (
             <Card key={persona.id} className="p-6 hover:border-primary/50 transition-all group">
               <div className="flex items-start gap-4 mb-4">
                 <Avatar className="h-16 w-16">
@@ -107,9 +143,9 @@ const Personas = () => {
 
               <div className="space-y-4">
                 <div className="flex flex-wrap gap-2">
-                  {persona.traits.map((trait) => (
-                    <Badge key={trait} variant="secondary" className="text-xs">
-                      {trait}
+                  {(Array.isArray(traits) ? traits : []).map((trait, idx) => (
+                    <Badge key={idx} variant="secondary" className="text-xs">
+                      {typeof trait === 'string' ? trait : String(trait)}
                     </Badge>
                   ))}
                 </div>
@@ -117,15 +153,15 @@ const Personas = () => {
                 <div className="grid grid-cols-3 gap-2 text-xs">
                   <div className="text-center p-2 bg-muted/50 rounded">
                     <p className="text-muted-foreground mb-1">Openness</p>
-                    <p className="font-semibold">{Math.round(persona.OCEAN.openness * 100)}%</p>
+                    <p className="font-semibold">{Math.round((oceanScores.openness || 0) * 100)}%</p>
                   </div>
                   <div className="text-center p-2 bg-muted/50 rounded">
                     <p className="text-muted-foreground mb-1">Conscientiousness</p>
-                    <p className="font-semibold">{Math.round(persona.OCEAN.conscientiousness * 100)}%</p>
+                    <p className="font-semibold">{Math.round((oceanScores.conscientiousness || 0) * 100)}%</p>
                   </div>
                   <div className="text-center p-2 bg-muted/50 rounded">
                     <p className="text-muted-foreground mb-1">Extraversion</p>
-                    <p className="font-semibold">{Math.round(persona.OCEAN.extraversion * 100)}%</p>
+                    <p className="font-semibold">{Math.round((oceanScores.extraversion || 0) * 100)}%</p>
                   </div>
                 </div>
 
@@ -135,15 +171,23 @@ const Personas = () => {
                     <Button variant="ghost" size="icon">
                       <Play className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="icon">
+                    <Button variant="ghost" size="icon" onClick={() => handleEdit(persona.id)}>
                       <Edit className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
               </div>
             </Card>
-          ))}
+          );
+        })}
         </div>
+
+        <PersonaEditor
+          open={editorOpen}
+          onOpenChange={setEditorOpen}
+          personaId={selectedPersonaId}
+          onSave={loadPersonas}
+        />
       </div>
     </AppShell>
   );
