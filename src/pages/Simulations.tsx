@@ -100,6 +100,7 @@ const Simulations = () => {
   const [userPersonas, setUserPersonas] = useState<any[]>([]);
   const [selectedCampaign, setSelectedCampaign] = useState<string>("");
   const [selectedPersona, setSelectedPersona] = useState<string>("");
+  const [selectedModel, setSelectedModel] = useState<string>("gpt-4o");
   const [simulations, setSimulations] = useState<any[]>([]);
   const [activeSimulation, setActiveSimulation] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -189,6 +190,7 @@ const Simulations = () => {
           body: {
             campaignId: selectedCampaign,
             personaId: selectedPersona,
+            model: selectedModel,
           },
         });
 
@@ -375,6 +377,19 @@ const Simulations = () => {
                           {campaign.name}
                         </SelectItem>
                       ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium mb-2 block">AI Model</label>
+                  <Select value={selectedModel} onValueChange={setSelectedModel}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose model" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="gpt-4o">GPT-4o (OpenAI)</SelectItem>
+                      <SelectItem value="gemini-2.5-flash">Gemini 2.5 Flash (Google)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
