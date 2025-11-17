@@ -108,8 +108,8 @@ const PersonaEditor = ({ open, onOpenChange, personaId, onSave }: PersonaEditorP
     setLoading(true);
 
     try {
-      // Use constant anonymous user ID since there's no authentication
-      const ANONYMOUS_USER_ID = "00000000-0000-0000-0000-000000000000";
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
 
       if (personaId) {
         const { error } = await supabase
@@ -127,7 +127,7 @@ const PersonaEditor = ({ open, onOpenChange, personaId, onSave }: PersonaEditorP
           .from("personas")
           .insert({
             ...formData,
-            user_id: ANONYMOUS_USER_ID,
+            user_id: user.id,
             ocean_scores: formData.ocean_scores,
           });
 
